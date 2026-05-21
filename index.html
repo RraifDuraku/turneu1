@@ -1,0 +1,1312 @@
+<!DOCTYPE html>
+<html lang="sq">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>KRUSHË E MADHE | Turneu i Dëshmorëve dhe Martirëve 2025</title>
+<link href="https://fonts.googleapis.com/css2?family=Anton&family=JetBrains+Mono:wght@400;500;700&family=Barlow+Condensed:ital,wght@0,400;0,600;0,700;1,400&display=swap" rel="stylesheet">
+<script src="https://cdn.jsdelivr.net/npm/three@0.152.2/build/three.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.2/gsap.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.2/ScrollTrigger.min.js"></script>
+<style>
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+
+:root{
+  --void:#0E0E0E;
+  --bg:#131313;
+  --surface:#1C1B1B;
+  --surface2:#242323;
+  --surface3:#2E2D2D;
+  --red:#8B1A1A;
+  --red-bright:#C0272D;
+  --gold:#C8932B;
+  --gold-dim:#A0742A;
+  --text:#E8E4E2;
+  --text-muted:#9A8A87;
+  --border:#3A3636;
+  --border-red:rgba(139,26,26,0.4);
+  --font-display:'Anton',sans-serif;
+  --font-mono:'JetBrains Mono',monospace;
+  --font-body:'Barlow Condensed',sans-serif;
+}
+
+html{scroll-behavior:smooth;overflow-x:hidden}
+body{
+  background:var(--bg);
+  color:var(--text);
+  font-family:var(--font-body);
+  font-size:18px;
+  line-height:1.5;
+  overflow-x:hidden;
+}
+::selection{background:var(--red);color:#fff}
+::-webkit-scrollbar{width:4px}
+::-webkit-scrollbar-track{background:var(--void)}
+::-webkit-scrollbar-thumb{background:var(--red);border-radius:2px}
+
+/* NAVIGATION */
+nav{
+  position:fixed;top:0;left:0;right:0;z-index:100;
+  display:flex;align-items:center;justify-content:space-between;
+  padding:0 4rem;height:72px;
+  background:rgba(14,14,14,0.85);
+  border-bottom:1px solid var(--border-red);
+  backdrop-filter:blur(16px);
+  transition:height 0.3s ease;
+}
+nav.scrolled{height:56px}
+.nav-logo{
+  font-family:var(--font-display);
+  font-size:1.4rem;
+  color:var(--text);
+  letter-spacing:0.05em;
+  text-decoration:none;
+  line-height:1;
+}
+.nav-logo span{color:var(--gold)}
+.nav-links{display:flex;gap:2rem;align-items:center}
+.nav-links a{
+  font-family:var(--font-mono);
+  font-size:0.7rem;
+  font-weight:500;
+  letter-spacing:0.15em;
+  text-transform:uppercase;
+  color:var(--text-muted);
+  text-decoration:none;
+  transition:color 0.2s;
+}
+.nav-links a:hover,.nav-links a.active{color:var(--text)}
+.live-btn{
+  display:flex;align-items:center;gap:8px;
+  padding:8px 20px;
+  background:var(--red);
+  border:none;cursor:pointer;
+  font-family:var(--font-mono);font-size:0.65rem;
+  letter-spacing:0.15em;text-transform:uppercase;
+  color:#fff;transition:background 0.2s;
+}
+.live-btn:hover{background:var(--red-bright)}
+.live-dot{
+  width:8px;height:8px;border-radius:50%;
+  background:#FF3333;
+  animation:blink 1.5s ease-in-out infinite;
+}
+@keyframes blink{0%,100%{opacity:1;transform:scale(1)}50%{opacity:0.4;transform:scale(0.7)}}
+.nav-menu-mobile{display:none;cursor:pointer;background:none;border:none;color:var(--text);font-size:1.5rem}
+
+/* HERO */
+#hero{
+  position:relative;
+  width:100%;height:100vh;min-height:700px;
+  display:flex;flex-direction:column;justify-content:center;
+  padding:0 4rem;
+  overflow:hidden;
+}
+#three-canvas{
+  position:absolute;inset:0;
+  width:100%!important;height:100%!important;
+  z-index:0;
+}
+.crt-lines{
+  position:absolute;inset:0;z-index:1;pointer-events:none;
+  background:repeating-linear-gradient(
+    0deg,
+    transparent 0px,transparent 3px,
+    rgba(0,0,0,0.06) 3px,rgba(0,0,0,0.06) 4px
+  );
+}
+.grain-overlay{
+  position:absolute;inset:0;z-index:1;pointer-events:none;
+  opacity:0.04;
+  background-image:url("data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");
+  background-repeat:repeat;background-size:180px;
+  animation:grain-move 0.5s steps(2) infinite;
+}
+@keyframes grain-move{0%{transform:translate(0,0)}25%{transform:translate(-1px,1px)}50%{transform:translate(1px,-1px)}75%{transform:translate(-1px,-1px)}100%{transform:translate(1px,1px)}}
+.hero-vignette{
+  position:absolute;inset:0;z-index:1;pointer-events:none;
+  background:radial-gradient(ellipse at center,transparent 30%,rgba(14,14,14,0.7) 100%);
+}
+.hero-left-fade{
+  position:absolute;inset:0;z-index:1;pointer-events:none;
+  background:linear-gradient(to right,rgba(14,14,14,0.9) 30%,transparent 70%);
+}
+.hero-content{position:relative;z-index:2;max-width:700px}
+.hero-tag{
+  font-family:var(--font-mono);font-size:0.7rem;
+  letter-spacing:0.2em;text-transform:uppercase;
+  color:var(--gold);margin-bottom:1.5rem;
+  display:flex;align-items:center;gap:12px;
+  opacity:0;
+}
+.hero-tag::before{content:'';display:block;width:40px;height:1px;background:var(--red)}
+.hero-title{
+  font-family:var(--font-display);
+  font-size:clamp(3.5rem,8vw,7.5rem);
+  line-height:0.92;
+  text-transform:uppercase;
+  letter-spacing:-0.01em;
+  margin-bottom:1.5rem;
+  opacity:0;
+}
+.hero-title .red{color:var(--red)}
+.hero-title .gold{color:var(--gold)}
+.hero-subtitle{
+  font-size:1rem;color:var(--text-muted);
+  max-width:480px;line-height:1.7;
+  margin-bottom:2.5rem;opacity:0;
+}
+.hero-cta{display:flex;gap:1rem;flex-wrap:wrap;opacity:0}
+.btn-primary{
+  padding:14px 36px;background:var(--red);border:1px solid var(--red);
+  font-family:var(--font-mono);font-size:0.68rem;letter-spacing:0.15em;
+  text-transform:uppercase;color:#fff;cursor:pointer;
+  transition:all 0.25s;text-decoration:none;display:inline-flex;align-items:center;gap:8px;
+}
+.btn-primary:hover{background:var(--red-bright);border-color:var(--red-bright);transform:translateY(-2px)}
+.btn-outline{
+  padding:14px 36px;background:transparent;
+  border:1px solid var(--gold);
+  font-family:var(--font-mono);font-size:0.68rem;letter-spacing:0.15em;
+  text-transform:uppercase;color:var(--gold);cursor:pointer;
+  transition:all 0.25s;text-decoration:none;display:inline-flex;align-items:center;gap:8px;
+}
+.btn-outline:hover{background:rgba(200,147,43,0.1);transform:translateY(-2px)}
+.scroll-hint{
+  position:absolute;bottom:2rem;left:4rem;z-index:2;
+  display:flex;align-items:center;gap:12px;
+  font-family:var(--font-mono);font-size:0.6rem;letter-spacing:0.2em;
+  text-transform:uppercase;color:var(--text-muted);opacity:0;
+}
+.scroll-line{width:1px;height:48px;background:linear-gradient(to bottom,var(--red),transparent);animation:scroll-down 2s ease infinite}
+@keyframes scroll-down{0%,100%{transform:scaleY(1);transform-origin:top}50%{transform:scaleY(0.3);transform-origin:bottom}}
+
+/* HONOR RIBBON / TICKER */
+.ribbon{
+  background:var(--red);
+  border-top:1px solid rgba(255,255,255,0.1);
+  border-bottom:1px solid rgba(255,255,255,0.1);
+  overflow:hidden;padding:14px 0;
+  position:relative;z-index:10;
+}
+.ribbon-track{
+  display:flex;white-space:nowrap;
+  animation:ribbon-scroll 35s linear infinite;
+}
+.ribbon-track:hover{animation-play-state:paused}
+.ribbon-item{
+  display:inline-flex;align-items:center;gap:16px;
+  font-family:var(--font-display);font-size:1.3rem;
+  text-transform:uppercase;color:#fff;
+  padding:0 40px;
+  border-right:1px solid rgba(255,255,255,0.2);
+}
+.ribbon-icon{font-size:1rem;opacity:0.8}
+@keyframes ribbon-scroll{0%{transform:translateX(0)}100%{transform:translateX(-50%)}}
+
+/* SECTION BASE */
+section{padding:8rem 4rem}
+.section-label{
+  font-family:var(--font-mono);font-size:0.65rem;
+  letter-spacing:0.2em;text-transform:uppercase;color:var(--red);
+  display:flex;align-items:center;gap:12px;margin-bottom:1rem;
+}
+.section-label::after{content:'';flex:1;height:1px;background:var(--border)}
+.section-title{
+  font-family:var(--font-display);
+  font-size:clamp(2.2rem,4vw,3.8rem);
+  text-transform:uppercase;line-height:0.95;
+  letter-spacing:0.02em;margin-bottom:1.5rem;
+}
+.section-title .accent{color:var(--gold)}
+
+/* MEMORIAL SECTION */
+#memorial{background:var(--void)}
+.memorial-grid{display:grid;grid-template-columns:1fr 1fr;gap:4rem;align-items:center}
+.memorial-text .section-label{margin-bottom:2rem}
+.memorial-quote{
+  font-family:var(--font-display);font-size:clamp(1.8rem,3vw,2.6rem);
+  text-transform:uppercase;line-height:1.05;
+  color:var(--text);margin-bottom:2rem;letter-spacing:0.02em;
+}
+.memorial-quote em{color:var(--gold);font-style:normal}
+.memorial-body{
+  color:var(--text-muted);font-size:1rem;
+  line-height:1.75;margin-bottom:2.5rem;
+}
+.memorial-link{
+  display:inline-flex;align-items:center;gap:12px;
+  color:var(--gold);
+  font-family:var(--font-mono);font-size:0.68rem;
+  letter-spacing:0.15em;text-transform:uppercase;
+  text-decoration:none;transition:gap 0.2s;
+}
+.memorial-link:hover{gap:20px}
+.memorial-link::after{content:'→';font-size:1rem}
+.memorial-visual{
+  display:grid;grid-template-columns:1fr 1fr;gap:1rem;
+  height:520px;
+}
+.memorial-card{
+  position:relative;overflow:hidden;
+  border:1px solid var(--border);
+  background:var(--surface);
+  transition:border-color 0.3s;
+  cursor:default;
+}
+.memorial-card:first-child{grid-row:span 1;transform:translateY(0)}
+.memorial-card:last-child{grid-row:span 1;transform:translateY(3rem)}
+.memorial-card:hover{border-color:var(--gold)}
+.memorial-card-bg{
+  position:absolute;inset:0;
+  background:linear-gradient(135deg,var(--surface) 0%,var(--void) 100%);
+  display:flex;align-items:center;justify-content:center;
+}
+.memorial-card-pattern{
+  position:absolute;inset:0;
+  background-image:repeating-linear-gradient(45deg,transparent,transparent 20px,rgba(139,26,26,0.05) 20px,rgba(139,26,26,0.05) 21px);
+}
+.memorial-card-content{
+  position:absolute;bottom:0;left:0;right:0;
+  padding:1.5rem;
+  background:linear-gradient(to top,rgba(14,14,14,0.95) 60%,transparent);
+}
+.memorial-card-num{
+  font-family:var(--font-display);font-size:4rem;
+  color:rgba(200,147,43,0.12);position:absolute;top:1rem;left:1rem;
+  line-height:1;pointer-events:none;
+}
+.memorial-card-label{
+  font-family:var(--font-mono);font-size:0.65rem;
+  letter-spacing:0.15em;text-transform:uppercase;
+  color:var(--text-muted);margin-bottom:4px;
+}
+.memorial-card-name{
+  font-family:var(--font-display);font-size:1.1rem;
+  text-transform:uppercase;color:var(--text);
+}
+
+/* STATS BAR */
+.stats-bar{
+  background:var(--surface);
+  border-top:1px solid var(--border-red);
+  border-bottom:1px solid var(--border-red);
+  display:grid;grid-template-columns:repeat(4,1fr);
+}
+.stat-item{
+  padding:2.5rem 2rem;text-align:center;
+  border-right:1px solid var(--border);
+  position:relative;overflow:hidden;
+  transition:background 0.3s;
+}
+.stat-item:last-child{border-right:none}
+.stat-item:hover{background:rgba(139,26,26,0.06)}
+.stat-item::before{
+  content:'';position:absolute;bottom:0;left:50%;
+  transform:translateX(-50%);
+  width:0;height:2px;background:var(--gold);
+  transition:width 0.4s ease;
+}
+.stat-item:hover::before{width:60%}
+.stat-num{
+  font-family:var(--font-display);
+  font-size:clamp(2.5rem,4vw,4rem);
+  color:var(--text);line-height:1;margin-bottom:6px;
+  transition:color 0.3s;
+}
+.stat-item:hover .stat-num{color:var(--gold)}
+.stat-label{
+  font-family:var(--font-mono);font-size:0.62rem;
+  letter-spacing:0.18em;text-transform:uppercase;
+  color:var(--text-muted);
+}
+
+/* BRACKET */
+#bracket{background:var(--bg);padding-bottom:6rem}
+.bracket-scroll{
+  overflow-x:auto;padding:3rem 0 2rem;
+  -webkit-overflow-scrolling:touch;
+}
+.bracket-scroll::-webkit-scrollbar{height:4px}
+.bracket-scroll::-webkit-scrollbar-thumb{background:var(--red)}
+.bracket-inner{
+  display:flex;gap:0;min-width:1100px;
+  padding:0 4rem;
+  position:relative;
+}
+.round{
+  flex:1;display:flex;flex-direction:column;
+  justify-content:space-around;
+  gap:0;min-width:200px;
+}
+.round-header{
+  font-family:var(--font-mono);font-size:0.6rem;
+  letter-spacing:0.18em;text-transform:uppercase;
+  color:var(--text-muted);padding:0 0 1.5rem 8px;
+  border-bottom:1px solid var(--border);margin-bottom:1rem;
+}
+.match{
+  margin:6px 0;
+  background:rgba(28,27,27,0.8);
+  border:1px solid var(--border);
+  backdrop-filter:blur(8px);
+  position:relative;overflow:hidden;
+  transition:border-color 0.25s,background 0.25s;
+  opacity:0;transform:translateX(-20px);
+}
+.match:hover{
+  border-color:rgba(139,26,26,0.6);
+  background:rgba(36,35,35,0.95);
+}
+.match.status-live{
+  border-color:var(--red);
+  animation:live-pulse 2.5s ease infinite;
+}
+@keyframes live-pulse{
+  0%,100%{box-shadow:0 0 0 0 rgba(139,26,26,0)}
+  50%{box-shadow:0 0 0 4px rgba(139,26,26,0.15)}
+}
+.match.status-done{border-color:rgba(200,147,43,0.25)}
+.match.status-locked{opacity:0.4!important}
+.match-status{
+  position:absolute;top:0;right:0;
+  padding:3px 10px;
+  font-family:var(--font-mono);font-size:0.55rem;
+  letter-spacing:0.12em;text-transform:uppercase;
+}
+.status-live .match-status{background:var(--red);color:#fff}
+.status-done .match-status{background:rgba(200,147,43,0.2);color:var(--gold)}
+.status-upcoming .match-status{background:var(--surface3);color:var(--text-muted)}
+.match-team{
+  display:flex;justify-content:space-between;align-items:center;
+  padding:8px 12px;font-size:0.82rem;
+  font-family:var(--font-body);font-weight:600;
+  letter-spacing:0.05em;text-transform:uppercase;
+  border-bottom:1px solid rgba(255,255,255,0.04);
+  transition:background 0.2s;
+}
+.match-team:last-of-type{border-bottom:none}
+.match-team.winner{color:var(--text)}
+.match-team.loser{color:var(--text-muted);opacity:0.6}
+.match-team:hover{background:rgba(139,26,26,0.08)}
+.match-score{
+  font-family:var(--font-mono);font-weight:700;font-size:0.85rem;
+  color:var(--gold);min-width:18px;text-align:right;
+}
+.match-score.red{color:var(--red)}
+.match-connector{
+  position:absolute;right:-20px;top:50%;transform:translateY(-50%);
+  width:20px;height:1px;background:var(--border);z-index:1;
+}
+.match-live-dot{
+  display:inline-block;width:6px;height:6px;
+  border-radius:50%;background:#FF3333;margin-right:6px;
+  animation:blink 1s ease infinite;vertical-align:middle;
+}
+
+/* CHAMPION DISPLAY */
+.champion-display{
+  margin:3rem 4rem 0;padding:2.5rem;
+  border:1px solid rgba(200,147,43,0.5);
+  background:linear-gradient(135deg,rgba(200,147,43,0.06) 0%,transparent 60%);
+  display:flex;align-items:center;gap:2rem;
+  position:relative;overflow:hidden;
+}
+.champion-display::before{
+  content:'KAMPIONI';
+  position:absolute;right:2rem;top:50%;transform:translateY(-50%);
+  font-family:var(--font-display);font-size:6rem;
+  color:rgba(200,147,43,0.05);line-height:1;letter-spacing:-0.02em;
+  pointer-events:none;
+}
+.trophy-icon{
+  font-size:3.5rem;color:var(--gold);flex-shrink:0;
+  animation:trophy-glow 3s ease infinite;
+}
+@keyframes trophy-glow{0%,100%{filter:brightness(1)}50%{filter:brightness(1.3)}}
+.champion-info .label{
+  font-family:var(--font-mono);font-size:0.62rem;
+  letter-spacing:0.2em;text-transform:uppercase;color:var(--gold);
+  margin-bottom:8px;
+}
+.champion-info .name{
+  font-family:var(--font-display);font-size:2.2rem;
+  text-transform:uppercase;color:var(--text);line-height:1;
+}
+.champion-info .sub{
+  font-family:var(--font-mono);font-size:0.75rem;
+  color:var(--text-muted);margin-top:6px;
+}
+
+/* LEADERBOARD */
+#leaderboard{background:var(--void)}
+.podium{display:grid;grid-template-columns:1fr 1.15fr 1fr;gap:1px;margin-bottom:4rem;background:var(--border)}
+.podium-card{
+  background:var(--void);padding:2.5rem 2rem;
+  text-align:center;position:relative;overflow:hidden;
+  transition:background 0.3s;
+}
+.podium-card:hover{background:rgba(20,18,18,0.8)}
+.podium-card.gold-boot{
+  background:rgba(200,147,43,0.06);
+  border-top:2px solid var(--gold);
+}
+.podium-card.gold-boot:hover{background:rgba(200,147,43,0.1)}
+.podium-rank{
+  font-family:var(--font-display);
+  font-size:5rem;color:rgba(255,255,255,0.04);
+  position:absolute;top:-1rem;left:50%;transform:translateX(-50%);
+  line-height:1;pointer-events:none;
+}
+.podium-medal{font-size:2rem;margin-bottom:1rem;display:block}
+.podium-name{
+  font-family:var(--font-display);font-size:1.5rem;
+  text-transform:uppercase;color:var(--text);margin-bottom:4px;
+}
+.podium-card.gold-boot .podium-name{color:var(--gold)}
+.podium-club{
+  font-family:var(--font-mono);font-size:0.65rem;
+  letter-spacing:0.12em;text-transform:uppercase;
+  color:var(--text-muted);margin-bottom:1.5rem;
+}
+.podium-goals{
+  font-family:var(--font-display);font-size:3.5rem;
+  line-height:1;color:var(--text);
+}
+.podium-card.gold-boot .podium-goals{color:var(--gold)}
+.podium-goals-label{
+  font-family:var(--font-mono);font-size:0.6rem;
+  letter-spacing:0.2em;text-transform:uppercase;color:var(--text-muted);margin-top:4px;
+}
+.podium-bar{
+  margin-top:1.5rem;height:3px;background:var(--border);
+  position:relative;overflow:hidden;
+}
+.podium-bar-fill{height:100%;background:var(--text-muted);transition:width 1.5s ease;width:0}
+.gold-boot .podium-bar-fill{background:var(--gold)}
+
+/* LEADERBOARD TABLE */
+.lb-table{width:100%;border-collapse:collapse;margin-top:3rem}
+.lb-table th{
+  font-family:var(--font-mono);font-size:0.62rem;
+  letter-spacing:0.15em;text-transform:uppercase;
+  color:var(--text-muted);padding:1rem 1.5rem;
+  text-align:left;border-bottom:1px solid var(--border);
+  font-weight:500;
+}
+.lb-table th:last-child,.lb-table td:last-child{text-align:right}
+.lb-table tbody tr{
+  border-bottom:1px solid rgba(255,255,255,0.04);
+  transition:background 0.2s;cursor:default;opacity:0;
+}
+.lb-table tbody tr:hover{background:rgba(139,26,26,0.07)}
+.lb-table td{padding:1.25rem 1.5rem;vertical-align:middle}
+.lb-rank{
+  font-family:var(--font-mono);font-size:0.7rem;
+  color:var(--text-muted);width:40px;
+}
+.lb-player{font-weight:600;font-size:0.95rem;text-transform:uppercase;letter-spacing:0.05em}
+.lb-club{font-family:var(--font-mono);font-size:0.65rem;letter-spacing:0.1em;text-transform:uppercase;color:var(--text-muted)}
+.lb-mp,.lb-a{font-family:var(--font-mono);font-size:0.8rem;color:var(--text-muted)}
+.lb-goals{
+  font-family:var(--font-display);font-size:1.6rem;
+  color:var(--text);transition:color 0.2s;
+}
+.lb-table tbody tr:hover .lb-goals{color:var(--gold)}
+.lb-bar-wrap{width:120px}
+.lb-bar{height:2px;background:var(--border);position:relative;overflow:hidden;border-radius:1px}
+.lb-bar-fill{height:100%;background:var(--red);transition:width 1.2s ease;width:0;border-radius:1px}
+
+/* QUOTE SECTION */
+#quote{
+  padding:6rem 4rem;
+  background:var(--surface);
+  border-top:1px solid var(--border-red);
+  border-bottom:1px solid var(--border-red);
+  text-align:center;position:relative;overflow:hidden;
+}
+#quote::before{
+  content:'"';
+  position:absolute;top:-2rem;left:50%;transform:translateX(-50%);
+  font-family:var(--font-display);font-size:20rem;
+  color:rgba(139,26,26,0.08);line-height:1;pointer-events:none;
+}
+.quote-text{
+  font-family:var(--font-display);
+  font-size:clamp(1.5rem,3vw,2.5rem);
+  text-transform:uppercase;line-height:1.1;
+  letter-spacing:0.02em;max-width:800px;margin:0 auto 2rem;
+  position:relative;z-index:1;
+}
+.quote-source{
+  font-family:var(--font-mono);font-size:0.65rem;
+  letter-spacing:0.2em;text-transform:uppercase;color:var(--gold);
+  position:relative;z-index:1;
+}
+
+/* FOOTER */
+footer{
+  background:var(--void);
+  border-top:1px solid var(--border);
+  padding:4rem;
+  display:grid;grid-template-columns:auto 1fr auto;gap:3rem;align-items:start;
+}
+.footer-logo{
+  font-family:var(--font-display);font-size:1.8rem;
+  text-transform:uppercase;color:var(--gold);line-height:1;
+}
+.footer-logo small{
+  display:block;font-family:var(--font-mono);
+  font-size:0.58rem;letter-spacing:0.15em;
+  color:var(--text-muted);font-weight:400;margin-top:6px;
+}
+.footer-links{display:flex;gap:2.5rem;flex-wrap:wrap;padding-top:6px}
+.footer-links a{
+  font-family:var(--font-mono);font-size:0.62rem;
+  letter-spacing:0.15em;text-transform:uppercase;
+  color:var(--text-muted);text-decoration:none;transition:color 0.2s;
+}
+.footer-links a:hover{color:var(--text)}
+.footer-social{display:flex;gap:1rem}
+.social-btn{
+  width:40px;height:40px;border:1px solid var(--border);
+  display:flex;align-items:center;justify-content:center;
+  color:var(--text-muted);text-decoration:none;
+  transition:all 0.2s;font-size:1rem;
+}
+.social-btn:hover{border-color:var(--gold);color:var(--gold)}
+.footer-copy{
+  grid-column:1/-1;padding-top:2rem;
+  border-top:1px solid var(--border);margin-top:1rem;
+  font-family:var(--font-mono);font-size:0.58rem;
+  letter-spacing:0.12em;text-transform:uppercase;
+  color:rgba(154,138,135,0.4);text-align:center;
+}
+
+/* RESPONSIVE */
+@media(max-width:1024px){
+  nav{padding:0 2rem}
+  section{padding:5rem 2rem}
+  #hero{padding:0 2rem}
+  .memorial-grid{grid-template-columns:1fr}
+  .memorial-visual{height:300px;grid-template-columns:1fr 1fr}
+  footer{grid-template-columns:1fr;gap:2rem;padding:3rem 2rem}
+  .stats-bar{grid-template-columns:repeat(2,1fr)}
+  .stats-bar .stat-item:nth-child(2){border-right:none}
+  .bracket-inner{padding:0 2rem}
+}
+@media(max-width:768px){
+  nav{padding:0 1.5rem}
+  .nav-links{display:none}
+  .nav-menu-mobile{display:block}
+  nav.menu-open .nav-links{
+    display:flex;flex-direction:column;
+    position:fixed;top:72px;left:0;right:0;bottom:0;
+    background:rgba(14,14,14,0.97);
+    align-items:center;justify-content:center;gap:2.5rem;
+  }
+  nav.menu-open .nav-links a{font-size:1.2rem}
+  section{padding:4rem 1.5rem}
+  #hero{padding:0 1.5rem}
+  .scroll-hint{left:1.5rem}
+  .podium{grid-template-columns:1fr}
+  .champion-display{flex-direction:column;text-align:center;margin:2rem 1.5rem 0}
+  .champion-display::before{display:none}
+  .lb-bar-wrap{display:none}
+  .footer-links{gap:1.5rem}
+  #quote{padding:4rem 1.5rem}
+}
+
+/* UTILITIES */
+.overflow-hidden{overflow:hidden}
+.reveal{opacity:0;transform:translateY(30px)}
+</style>
+</head>
+<body>
+
+<!-- ═══ NAVIGATION ═══ -->
+<nav id="navbar">
+  <a href="#hero" class="nav-logo">KRUSHË<span>E</span>MADHE</a>
+  <div class="nav-links">
+    <a href="#hero" class="active">Ballina</a>
+    <a href="#memorial">Memoriali</a>
+    <a href="#bracket">Skema</a>
+    <a href="#leaderboard">Golashënuesit</a>
+    <a href="https://www.facebook.com/people/Turneu-i-Futbollit-D%C3%ABshmor%C3%ABt-dhe-Martir%C3%ABt-Krush%C3%AB-e-Madhe/61576472745612/" target="_blank" rel="noopener">Facebook</a>
+  </div>
+  <button class="live-btn">
+    <span class="live-dot"></span>LIVE SCORE
+  </button>
+  <button class="nav-menu-mobile" aria-label="Menu" id="menu-toggle">☰</button>
+</nav>
+
+<!-- ═══ HERO ═══ -->
+<section id="hero">
+  <canvas id="three-canvas"></canvas>
+  <div class="crt-lines"></div>
+  <div class="grain-overlay"></div>
+  <div class="hero-vignette"></div>
+  <div class="hero-left-fade"></div>
+
+  <div class="hero-content">
+    <div class="hero-tag" id="hero-tag">§ 01 &nbsp;·&nbsp; 29 MAJ — 14 QERSHOR 2025</div>
+    <h1 class="hero-title" id="hero-title">
+      Turneu i<br>
+      <span class="red">Dëshmorëve</span><br>
+      <span class="gold">dhe Martirëve</span>
+    </h1>
+    <p class="hero-subtitle" id="hero-sub">
+      Në kujtim të qëndresës dhe sakrificës sublime. Turneu jubilar që bashkon komunitetin përmes sportit dhe nderimit për heronjtë e Krushës së Madhe.
+    </p>
+    <div class="hero-cta" id="hero-cta">
+      <a href="#bracket" class="btn-primary">Shiko Skemën →</a>
+      <a href="#leaderboard" class="btn-outline">Golashënuesit</a>
+    </div>
+  </div>
+
+  <div class="scroll-hint" id="scroll-hint">
+    <div class="scroll-line"></div>
+    Scroll
+  </div>
+</section>
+
+<!-- ═══ HONOR RIBBON ═══ -->
+<div class="ribbon">
+  <div class="ribbon-track" id="ribbon-track">
+    <!-- Duplicated for seamless loop -->
+    <span class="ribbon-item"><span class="ribbon-icon">⚽</span>32 EKIPE</span>
+    <span class="ribbon-item"><span class="ribbon-icon">🏟</span>31 NDESHJE</span>
+    <span class="ribbon-item"><span class="ribbon-icon">🏆</span>ELIMINIM DIREKT</span>
+    <span class="ribbon-item"><span class="ribbon-icon">📍</span>KRUSHË E MADHE</span>
+    <span class="ribbon-item"><span class="ribbon-icon">🌟</span>LAVDI DËSHMORËVE</span>
+    <span class="ribbon-item"><span class="ribbon-icon">🎯</span>128 GOLA</span>
+    <span class="ribbon-item"><span class="ribbon-icon">⚽</span>32 EKIPE</span>
+    <span class="ribbon-item"><span class="ribbon-icon">🏟</span>31 NDESHJE</span>
+    <span class="ribbon-item"><span class="ribbon-icon">🏆</span>ELIMINIM DIREKT</span>
+    <span class="ribbon-item"><span class="ribbon-icon">📍</span>KRUSHË E MADHE</span>
+    <span class="ribbon-item"><span class="ribbon-icon">🌟</span>LAVDI DËSHMORËVE</span>
+    <span class="ribbon-item"><span class="ribbon-icon">🎯</span>128 GOLA</span>
+  </div>
+</div>
+
+<!-- ═══ STATS BAR ═══ -->
+<div class="stats-bar">
+  <div class="stat-item reveal">
+    <div class="stat-num" data-count="32">0</div>
+    <div class="stat-label">Ekipe Pjesëmarrëse</div>
+  </div>
+  <div class="stat-item reveal">
+    <div class="stat-num" data-count="31">0</div>
+    <div class="stat-label">Ndeshje Totale</div>
+  </div>
+  <div class="stat-item reveal">
+    <div class="stat-num" data-count="128">0</div>
+    <div class="stat-label">Gola të Shënuara</div>
+  </div>
+  <div class="stat-item reveal">
+    <div class="stat-num" data-count="12">0</div>
+    <div class="stat-label">Gola — Këpuca e Artë</div>
+  </div>
+</div>
+
+<!-- ═══ MEMORIAL ═══ -->
+<section id="memorial">
+  <div class="memorial-grid">
+    <div class="memorial-text">
+      <div class="section-label reveal">§ 02 — Memoriali</div>
+      <h2 class="section-title reveal" style="transition-delay:0.1s">
+        <span class="accent">Lavdi e Përjetshme</span><br>Heronjve të Krushës
+      </h2>
+      <p class="memorial-body reveal" style="transition-delay:0.15s">
+        Ky turne nuk është vetëm një garë sportive, por një monument i gjallë kushtuar dëshmorëve dhe martirëve të Krushës së Madhe. Çdo gol, çdo fitore, çdo moment triumfi i dedikohet atyre që dhanë gjithçka për lirinë tonë.
+      </p>
+      <p class="memorial-body reveal" style="transition-delay:0.2s">
+        Memoriali i Krushës qëndron si dëshmi e pathyeshmërisë—mbi 240 jetë të pushkatosura gjatë luftës, emrat e të cilëve jetojnë përmes kësaj nisme komunitare.
+      </p>
+      <a href="https://www.facebook.com/people/Turneu-i-Futbollit-D%C3%ABshmor%C3%ABt-dhe-Martir%C3%ABt-Krush%C3%AB-e-Madhe/61576472745612/" target="_blank" class="memorial-link reveal" style="transition-delay:0.25s">Faqja Zyrtare në Facebook</a>
+    </div>
+    <div class="memorial-visual reveal" style="transition-delay:0.15s">
+      <div class="memorial-card">
+        <div class="memorial-card-bg">
+          <div class="memorial-card-pattern"></div>
+          <svg width="100%" height="100%" viewBox="0 0 200 300" fill="none" xmlns="http://www.w3.org/2000/svg" style="opacity:0.15;position:absolute">
+            <rect x="90" y="20" width="20" height="180" fill="#8B1A1A"/>
+            <polygon points="80,20 120,20 100,0" fill="#C8932B"/>
+            <rect x="60" y="200" width="80" height="20" fill="#8B1A1A"/>
+            <rect x="40" y="220" width="120" height="12" fill="#8B1A1A"/>
+          </svg>
+        </div>
+        <div class="memorial-card-num">01</div>
+        <div class="memorial-card-content">
+          <div class="memorial-card-label">Memoriali</div>
+          <div class="memorial-card-name">Përjetësia</div>
+        </div>
+      </div>
+      <div class="memorial-card" style="margin-top:3rem">
+        <div class="memorial-card-bg">
+          <div class="memorial-card-pattern"></div>
+          <svg width="100%" height="100%" viewBox="0 0 200 300" fill="none" xmlns="http://www.w3.org/2000/svg" style="opacity:0.12;position:absolute">
+            <circle cx="100" cy="120" r="60" stroke="#C8932B" stroke-width="2" fill="none"/>
+            <circle cx="100" cy="120" r="40" stroke="#8B1A1A" stroke-width="1.5" fill="none"/>
+            <circle cx="100" cy="120" r="20" fill="#8B1A1A" opacity="0.6"/>
+            <line x1="100" y1="0" x2="100" y2="240" stroke="#C8932B" stroke-width="1" opacity="0.5"/>
+            <line x1="0" y1="120" x2="200" y2="120" stroke="#C8932B" stroke-width="1" opacity="0.5"/>
+          </svg>
+        </div>
+        <div class="memorial-card-num">02</div>
+        <div class="memorial-card-content">
+          <div class="memorial-card-label">Turneu</div>
+          <div class="memorial-card-name">Qëndresa</div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ═══ BRACKET ═══ -->
+<section id="bracket">
+  <div class="section-label reveal">§ 03 — Skema e Eliminimit</div>
+  <h2 class="section-title reveal">
+    Rruga drejt <span class="accent">Finales</span>
+  </h2>
+  <div class="bracket-scroll">
+    <div class="bracket-inner">
+
+      <!-- ROUND OF 16 -->
+      <div class="round">
+        <div class="round-header">Raundi i 32-ve</div>
+
+        <div class="match status-done">
+          <div class="match-status">Përfunduar</div>
+          <div class="match-team winner">KF Krusha <span class="match-score">3</span></div>
+          <div class="match-team loser">KF Celina <span class="match-score">1</span></div>
+        </div>
+        <div class="match status-done">
+          <div class="match-status">Përfunduar</div>
+          <div class="match-team winner">KF Rogova <span class="match-score">2</span></div>
+          <div class="match-team loser">KF Pirana <span class="match-score">0</span></div>
+        </div>
+        <div class="match status-done">
+          <div class="match-status">Përfunduar</div>
+          <div class="match-team winner">KF Xërxa <span class="match-score">4</span></div>
+          <div class="match-team loser">KF Ratkoci <span class="match-score">2</span></div>
+        </div>
+        <div class="match status-done">
+          <div class="match-status">Përfunduar</div>
+          <div class="match-team winner">KF Nagavci <span class="match-score">1</span></div>
+          <div class="match-team loser">KF Krushë V. <span class="match-score">0</span></div>
+        </div>
+        <div class="match status-done">
+          <div class="match-status">Përfunduar</div>
+          <div class="match-team winner">FC Martirët <span class="match-score">3</span></div>
+          <div class="match-team loser">KF Prizreni B <span class="match-score">2</span></div>
+        </div>
+        <div class="match status-done">
+          <div class="match-status">Përfunduar</div>
+          <div class="match-team winner">KF Drini <span class="match-score">2</span></div>
+          <div class="match-team loser">KF Luma <span class="match-score">1</span></div>
+        </div>
+        <div class="match status-done">
+          <div class="match-status">Përfunduar</div>
+          <div class="match-team winner">Liria FC <span class="match-score">2</span></div>
+          <div class="match-team loser">KF Suhareka <span class="match-score">0</span></div>
+        </div>
+        <div class="match status-done">
+          <div class="match-status">Përfunduar</div>
+          <div class="match-team winner">Dardania <span class="match-score">3</span></div>
+          <div class="match-team loser">KF Pashtrik <span class="match-score">1</span></div>
+        </div>
+      </div>
+
+      <!-- ROUND OF 16 -->
+      <div class="round">
+        <div class="round-header">Round of 16</div>
+
+        <div class="match status-done">
+          <div class="match-status">Përfunduar</div>
+          <div class="match-team winner">KF Krusha <span class="match-score">2</span></div>
+          <div class="match-team loser">KF Rogova <span class="match-score">1</span></div>
+        </div>
+        <div class="match status-done">
+          <div class="match-status">Përfunduar</div>
+          <div class="match-team winner">KF Nagavci <span class="match-score">2</span></div>
+          <div class="match-team loser">KF Xërxa <span class="match-score">2</span></div>
+          <div style="font-family:var(--font-mono);font-size:0.55rem;color:var(--gold);padding:4px 12px;border-top:1px solid rgba(255,255,255,0.05)">Penalti 4–3</div>
+        </div>
+        <div class="match status-live">
+          <span class="match-live-dot"></span>
+          <div class="match-status">Drejtpërdrejt</div>
+          <div class="match-team winner">FC Martirët <span class="match-score red">2</span></div>
+          <div class="match-team">KF Drini <span class="match-score">1</span></div>
+        </div>
+        <div class="match status-upcoming">
+          <div class="match-status">Sot 20:30</div>
+          <div class="match-team loser">Liria FC <span class="match-score">—</span></div>
+          <div class="match-team loser">Dardania <span class="match-score">—</span></div>
+        </div>
+      </div>
+
+      <!-- QUARTER FINALS -->
+      <div class="round">
+        <div class="round-header">Çerekfinalet</div>
+
+        <div class="match status-locked">
+          <div class="match-status">Pritet</div>
+          <div class="match-team loser">KF Krusha <span class="match-score">—</span></div>
+          <div class="match-team loser">KF Nagavci <span class="match-score">—</span></div>
+        </div>
+        <div class="match status-locked">
+          <div class="match-status">Pritet</div>
+          <div class="match-team loser">FC Martirët <span class="match-score">—</span></div>
+          <div class="match-team loser">? <span class="match-score">—</span></div>
+        </div>
+      </div>
+
+      <!-- SEMI FINALS -->
+      <div class="round">
+        <div class="round-header">Gjysmëfinalet</div>
+        <div class="match status-locked">
+          <div class="match-status">Pritet</div>
+          <div class="match-team loser" style="padding:1.5rem 12px">— <span class="match-score">—</span></div>
+          <div class="match-team loser">— <span class="match-score">—</span></div>
+        </div>
+      </div>
+
+      <!-- FINAL -->
+      <div class="round">
+        <div class="round-header">🏆 Finalja e Madhe</div>
+        <div class="match" style="border:1px solid rgba(200,147,43,0.4);background:rgba(200,147,43,0.04);opacity:0">
+          <div class="match-team loser" style="padding:2rem 1rem;justify-content:center;font-family:var(--font-display);font-size:1rem;color:var(--gold);letter-spacing:0.05em">14 QERSHOR 2025</div>
+          <div class="match-team loser" style="padding:0 1rem 2rem;justify-content:center;font-family:var(--font-mono);font-size:0.6rem;color:var(--text-muted)">Stadiumi "Dëshmorët"</div>
+        </div>
+      </div>
+
+    </div>
+  </div>
+
+  <div class="champion-display reveal">
+    <div class="trophy-icon">🏆</div>
+    <div class="champion-info">
+      <div class="label">Mbrojtësi i Titullit 2024</div>
+      <div class="name">FC Dëshmorët</div>
+      <div class="sub">Finalistë: KF Krusha — 2:1 (AET) · Stadiumi "Dëshmorët e Krushës"</div>
+    </div>
+  </div>
+</section>
+
+<!-- ═══ LEADERBOARD ═══ -->
+<section id="leaderboard">
+  <div class="section-label reveal">§ 04 — Statistikat</div>
+  <h2 class="section-title reveal">
+    Golashënuesit — <span class="accent">Këpuca e Artë</span>
+  </h2>
+
+  <!-- PODIUM TOP 3 -->
+  <div class="podium reveal">
+    <div class="podium-card">
+      <div class="podium-rank">02</div>
+      <span class="podium-medal">🥈</span>
+      <div class="podium-name">Dritë Konjuhi</div>
+      <div class="podium-club">KF Krusha</div>
+      <div class="podium-goals">9</div>
+      <div class="podium-goals-label">Gola</div>
+      <div class="podium-bar"><div class="podium-bar-fill" data-width="75"></div></div>
+    </div>
+    <div class="podium-card gold-boot">
+      <div class="podium-rank">01</div>
+      <span class="podium-medal">🥇</span>
+      <div class="podium-name">Alban Gashi</div>
+      <div class="podium-club">FC Martirët</div>
+      <div class="podium-goals">12</div>
+      <div class="podium-goals-label">Gola · Këpuca e Artë</div>
+      <div class="podium-bar"><div class="podium-bar-fill" data-width="100"></div></div>
+    </div>
+    <div class="podium-card">
+      <div class="podium-rank">03</div>
+      <span class="podium-medal">🥉</span>
+      <div class="podium-name">Besnik Hoti</div>
+      <div class="podium-club">Dardania</div>
+      <div class="podium-goals">8</div>
+      <div class="podium-goals-label">Gola</div>
+      <div class="podium-bar"><div class="podium-bar-fill" data-width="66"></div></div>
+    </div>
+  </div>
+
+  <!-- FULL TABLE -->
+  <table class="lb-table">
+    <thead>
+      <tr>
+        <th>#</th>
+        <th>Lojtari</th>
+        <th>Ekipi</th>
+        <th>ND</th>
+        <th>AST</th>
+        <th>Gola</th>
+        <th class="lb-bar-wrap"></th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td class="lb-rank">04</td>
+        <td><div class="lb-player">Valon Bytyqi</div></td>
+        <td class="lb-club">Shtëpia e Kulturës</td>
+        <td class="lb-mp">5</td>
+        <td class="lb-a">3</td>
+        <td class="lb-goals">7</td>
+        <td class="lb-bar-wrap"><div class="lb-bar"><div class="lb-bar-fill" data-width="58"></div></div></td>
+      </tr>
+      <tr>
+        <td class="lb-rank">05</td>
+        <td><div class="lb-player">Liridon Kasapi</div></td>
+        <td class="lb-club">Anatema City</td>
+        <td class="lb-mp">4</td>
+        <td class="lb-a">2</td>
+        <td class="lb-goals">6</td>
+        <td class="lb-bar-wrap"><div class="lb-bar"><div class="lb-bar-fill" data-width="50"></div></div></td>
+      </tr>
+      <tr>
+        <td class="lb-rank">06</td>
+        <td><div class="lb-player">Arianit Morina</div></td>
+        <td class="lb-club">KF Drini</td>
+        <td class="lb-mp">6</td>
+        <td class="lb-a">4</td>
+        <td class="lb-goals">6</td>
+        <td class="lb-bar-wrap"><div class="lb-bar"><div class="lb-bar-fill" data-width="50"></div></div></td>
+      </tr>
+      <tr>
+        <td class="lb-rank">07</td>
+        <td><div class="lb-player">Kastriot Zeka</div></td>
+        <td class="lb-club">Veterani 99</td>
+        <td class="lb-mp">4</td>
+        <td class="lb-a">1</td>
+        <td class="lb-goals">5</td>
+        <td class="lb-bar-wrap"><div class="lb-bar"><div class="lb-bar-fill" data-width="41"></div></div></td>
+      </tr>
+      <tr>
+        <td class="lb-rank">08</td>
+        <td><div class="lb-player">Egzon Duraku</div></td>
+        <td class="lb-club">Krusha e Vogël</td>
+        <td class="lb-mp">5</td>
+        <td class="lb-a">2</td>
+        <td class="lb-goals">5</td>
+        <td class="lb-bar-wrap"><div class="lb-bar"><div class="lb-bar-fill" data-width="41"></div></div></td>
+      </tr>
+      <tr>
+        <td class="lb-rank">09</td>
+        <td><div class="lb-player">Petrit Krasniqi</div></td>
+        <td class="lb-club">Dëshmorët</td>
+        <td class="lb-mp">3</td>
+        <td class="lb-a">3</td>
+        <td class="lb-goals">4</td>
+        <td class="lb-bar-wrap"><div class="lb-bar"><div class="lb-bar-fill" data-width="33"></div></div></td>
+      </tr>
+      <tr>
+        <td class="lb-rank">10</td>
+        <td><div class="lb-player">Flori Berisha</div></td>
+        <td class="lb-club">KF Nagavci</td>
+        <td class="lb-mp">5</td>
+        <td class="lb-a">1</td>
+        <td class="lb-goals">4</td>
+        <td class="lb-bar-wrap"><div class="lb-bar"><div class="lb-bar-fill" data-width="33"></div></div></td>
+      </tr>
+    </tbody>
+  </table>
+</section>
+
+<!-- ═══ QUOTE ═══ -->
+<section id="quote">
+  <div class="quote-text reveal">
+    "Në fushën e lojës ashtu si në fushën e nderit, qëndresa jonë është dëshmia e pafundësisë së tyre"
+  </div>
+  <div class="quote-source reveal">— Shoqata e Martirëve, Krushë e Madhe</div>
+</section>
+
+<!-- ═══ FOOTER ═══ -->
+<footer>
+  <div class="footer-logo">
+    KRUSHË<br>E MADHE
+    <small>Turneu i Dëshmorëve dhe Martirëve · 2025</small>
+  </div>
+  <div class="footer-links">
+    <a href="#memorial">Historia e Krushës</a>
+    <a href="#">Shoqata e Martirëve</a>
+    <a href="#">Rregullorja</a>
+    <a href="#">Galeria</a>
+    <a href="#">Kontakt</a>
+  </div>
+  <div class="footer-social">
+    <a href="https://www.facebook.com/people/Turneu-i-Futbollit-D%C3%ABshmor%C3%ABt-dhe-Martir%C3%ABt-Krush%C3%AB-e-Madhe/61576472745612/" target="_blank" rel="noopener" class="social-btn" aria-label="Facebook">f</a>
+    <a href="#" class="social-btn" aria-label="Share">↗</a>
+  </div>
+  <div class="footer-copy">
+    © 2025 Turneu i Dëshmorëve dhe Martirëve — Krushë e Madhe. Lavdi e Përjetshme.
+  </div>
+</footer>
+
+<script>
+// ═══ THREE.JS HERO SCENE ═══
+(function() {
+  const canvas = document.getElementById('three-canvas');
+  if (!canvas || typeof THREE === 'undefined') return;
+
+  const W = canvas.offsetWidth, H = canvas.offsetHeight;
+  const renderer = new THREE.WebGLRenderer({ canvas, alpha: true, antialias: true });
+  renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2));
+  renderer.setSize(W, H);
+  renderer.setClearColor(0x000000, 0);
+
+  const scene = new THREE.Scene();
+  const camera = new THREE.PerspectiveCamera(55, W / H, 0.1, 100);
+  camera.position.set(0, 0, 6);
+
+  // MATERIALS
+  const wireMat = new THREE.MeshBasicMaterial({ color: 0x8B1A1A, wireframe: true });
+  const wireMatGold = new THREE.MeshBasicMaterial({ color: 0xC8932B, wireframe: true });
+  const wireMatDim = new THREE.MeshBasicMaterial({ color: 0x3A1010, wireframe: true });
+
+  // CENTRAL MONUMENT — Obelisk-like icosahedron + pyramid cap
+  const group = new THREE.Group();
+
+  // Main body — elongated octahedron
+  const bodyGeo = new THREE.OctahedronGeometry(1.2, 1);
+  const body = new THREE.Mesh(bodyGeo, wireMat);
+  body.scale.y = 2.2;
+  group.add(body);
+
+  // Outer cage
+  const cageGeo = new THREE.IcosahedronGeometry(1.8, 0);
+  const cage = new THREE.Mesh(cageGeo, wireMatDim);
+  group.add(cage);
+
+  // Gold ring
+  const ringGeo = new THREE.TorusGeometry(2.2, 0.012, 6, 48);
+  const ring = new THREE.Mesh(ringGeo, wireMatGold);
+  ring.rotation.x = Math.PI / 2;
+  group.add(ring);
+
+  // Second tilted ring
+  const ring2Geo = new THREE.TorusGeometry(1.7, 0.008, 4, 32);
+  const ring2 = new THREE.Mesh(ring2Geo, wireMatGold);
+  ring2.rotation.x = Math.PI / 3;
+  ring2.rotation.y = Math.PI / 6;
+  group.add(ring2);
+
+  // Small orbiting satellites
+  const satGeo = new THREE.TetrahedronGeometry(0.15, 0);
+  const satMat = new THREE.MeshBasicMaterial({ color: 0xC8932B, wireframe: true });
+  const sats = [];
+  for (let i = 0; i < 6; i++) {
+    const s = new THREE.Mesh(satGeo, satMat);
+    const angle = (i / 6) * Math.PI * 2;
+    s.position.set(Math.cos(angle) * 2.8, Math.sin(angle * 0.5) * 0.8, Math.sin(angle) * 2.8);
+    s.userData = { angle, speed: 0.004 + Math.random() * 0.003, radius: 2.5 + Math.random() * 0.5, yOff: Math.sin(angle * 0.5) * 0.8 };
+    group.add(s);
+    sats.push(s);
+  }
+
+  scene.add(group);
+
+  // PARTICLES
+  const pCount = 600;
+  const pPositions = new Float32Array(pCount * 3);
+  for (let i = 0; i < pCount; i++) {
+    const r = 3 + Math.random() * 6;
+    const theta = Math.random() * Math.PI * 2;
+    const phi = Math.random() * Math.PI;
+    pPositions[i * 3] = r * Math.sin(phi) * Math.cos(theta);
+    pPositions[i * 3 + 1] = r * Math.cos(phi) * 1.5;
+    pPositions[i * 3 + 2] = r * Math.sin(phi) * Math.sin(theta);
+  }
+  const pGeo = new THREE.BufferGeometry();
+  pGeo.setAttribute('position', new THREE.BufferAttribute(pPositions, 3));
+  const pMat = new THREE.PointsMaterial({ color: 0x8B1A1A, size: 0.03, transparent: true, opacity: 0.6 });
+  const particles = new THREE.Points(pGeo, pMat);
+  scene.add(particles);
+
+  // GROUND GRID
+  const gridGeo = new THREE.PlaneGeometry(20, 20, 20, 20);
+  const gridMat = new THREE.MeshBasicMaterial({ color: 0x1A0808, wireframe: true, transparent: true, opacity: 0.3 });
+  const grid = new THREE.Mesh(gridGeo, gridMat);
+  grid.rotation.x = -Math.PI / 2;
+  grid.position.y = -2.8;
+  scene.add(grid);
+
+  // MOUSE TRACKING
+  let mouseX = 0, mouseY = 0, targetX = 0, targetY = 0;
+  document.addEventListener('mousemove', (e) => {
+    mouseX = (e.clientX / window.innerWidth - 0.5) * 2;
+    mouseY = (e.clientY / window.innerHeight - 0.5) * 2;
+  });
+
+  // RESIZE
+  window.addEventListener('resize', () => {
+    const w = canvas.offsetWidth, h = canvas.offsetHeight;
+    camera.aspect = w / h;
+    camera.updateProjectionMatrix();
+    renderer.setSize(w, h);
+  });
+
+  // ANIMATE
+  let t = 0;
+  function animate() {
+    requestAnimationFrame(animate);
+    t += 0.005;
+
+    // Smooth mouse follow
+    targetX += (mouseX - targetX) * 0.04;
+    targetY += (mouseY - targetY) * 0.04;
+
+    // Rotate main group
+    group.rotation.y = t * 0.25 + targetX * 0.5;
+    group.rotation.x = Math.sin(t * 0.3) * 0.1 + targetY * 0.2;
+
+    // Pulse scale on body
+    body.scale.x = 1 + Math.sin(t * 1.2) * 0.04;
+    body.scale.z = 1 + Math.sin(t * 1.2) * 0.04;
+
+    // Orbit satellites
+    sats.forEach((s, i) => {
+      s.userData.angle += s.userData.speed;
+      s.position.x = Math.cos(s.userData.angle) * s.userData.radius;
+      s.position.z = Math.sin(s.userData.angle) * s.userData.radius;
+      s.position.y = Math.sin(s.userData.angle * 2 + i) * 0.5;
+      s.rotation.y += 0.05;
+    });
+
+    // Rotate rings
+    ring.rotation.z = t * 0.1;
+    ring2.rotation.z = -t * 0.15;
+
+    // Drift particles
+    particles.rotation.y = t * 0.03;
+
+    renderer.render(scene, camera);
+  }
+  animate();
+})();
+
+// ═══ GSAP ANIMATIONS ═══
+(function() {
+  if (typeof gsap === 'undefined') return;
+  gsap.registerPlugin(ScrollTrigger);
+
+  // Hero entrance
+  gsap.to('#hero-tag', { opacity: 1, y: 0, duration: 0.8, delay: 0.3, ease: 'power3.out' });
+  gsap.to('#hero-title', { opacity: 1, y: 0, duration: 1, delay: 0.5, ease: 'power3.out' });
+  gsap.to('#hero-sub', { opacity: 1, y: 0, duration: 0.8, delay: 0.8, ease: 'power3.out' });
+  gsap.to('#hero-cta', { opacity: 1, y: 0, duration: 0.8, delay: 1.0, ease: 'power3.out' });
+  gsap.to('#scroll-hint', { opacity: 1, duration: 0.8, delay: 1.4 });
+
+  // Generic scroll reveals
+  gsap.utils.toArray('.reveal').forEach((el, i) => {
+    gsap.to(el, {
+      opacity: 1, y: 0, duration: 0.9,
+      ease: 'power3.out',
+      scrollTrigger: {
+        trigger: el, start: 'top 88%',
+        once: true
+      },
+      delay: (el.style.transitionDelay ? parseFloat(el.style.transitionDelay) : 0)
+    });
+  });
+
+  // Bracket matches stagger
+  gsap.utils.toArray('.match').forEach((el, i) => {
+    gsap.to(el, {
+      opacity: el.classList.contains('status-locked') ? 0.4 : 1,
+      x: 0,
+      duration: 0.6,
+      ease: 'power2.out',
+      scrollTrigger: {
+        trigger: '#bracket', start: 'top 70%', once: true
+      },
+      delay: 0.08 * i
+    });
+  });
+
+  // Leaderboard table rows stagger
+  gsap.utils.toArray('.lb-table tbody tr').forEach((tr, i) => {
+    gsap.to(tr, {
+      opacity: 1, duration: 0.5, ease: 'power2.out',
+      scrollTrigger: { trigger: '#leaderboard', start: 'top 60%', once: true },
+      delay: 0.3 + i * 0.07
+    });
+  });
+
+  // Count-up stat numbers
+  gsap.utils.toArray('.stat-num').forEach(el => {
+    const target = parseInt(el.dataset.count, 10);
+    ScrollTrigger.create({
+      trigger: el, start: 'top 85%', once: true,
+      onEnter: () => {
+        gsap.to({ val: 0 }, {
+          val: target, duration: 1.5, ease: 'power2.out',
+          onUpdate: function() { el.textContent = Math.round(this.targets()[0].val); },
+          onComplete: () => { el.textContent = target; }
+        });
+      }
+    });
+  });
+
+  // Progress bars
+  gsap.utils.toArray('.podium-bar-fill, .lb-bar-fill').forEach(el => {
+    ScrollTrigger.create({
+      trigger: el, start: 'top 85%', once: true,
+      onEnter: () => {
+        const w = el.dataset.width || 50;
+        gsap.to(el, { width: w + '%', duration: 1.2, delay: 0.3, ease: 'power2.out' });
+      }
+    });
+  });
+})();
+
+// ═══ NAVBAR SCROLL ═══
+(function() {
+  const nav = document.getElementById('navbar');
+  const sections = document.querySelectorAll('section[id], #hero');
+  const navLinks = document.querySelectorAll('.nav-links a');
+
+  window.addEventListener('scroll', () => {
+    nav.classList.toggle('scrolled', window.scrollY > 80);
+
+    let current = '';
+    sections.forEach(s => {
+      if (window.scrollY >= s.offsetTop - 100) current = s.id;
+    });
+    navLinks.forEach(a => {
+      a.classList.remove('active');
+      if (a.getAttribute('href') === '#' + current) a.classList.add('active');
+    });
+  });
+
+  // Mobile menu
+  const toggle = document.getElementById('menu-toggle');
+  if (toggle) {
+    toggle.addEventListener('click', () => {
+      nav.classList.toggle('menu-open');
+      toggle.textContent = nav.classList.contains('menu-open') ? '✕' : '☰';
+    });
+    document.querySelectorAll('.nav-links a').forEach(a => {
+      a.addEventListener('click', () => {
+        nav.classList.remove('menu-open');
+        toggle.textContent = '☰';
+      });
+    });
+  }
+})();
+
+// ═══ BRACKET LIVE TIMER ═══
+(function() {
+  let min = 67;
+  setInterval(() => {
+    if (min < 90) {
+      min++;
+      document.querySelectorAll('.match.status-live .match-status').forEach(el => {
+        el.textContent = min + "'";
+      });
+    }
+  }, 60000);
+})();
+</script>
+</body>
+</html>
