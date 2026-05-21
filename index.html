@@ -1185,6 +1185,9 @@ footer{
   animate();
 })();
 
+
+
+
 // ═══ GSAP ANIMATIONS ═══
 (function() {
   if (typeof gsap === 'undefined') return;
@@ -1307,6 +1310,20 @@ footer{
     }
   }, 60000);
 })();
+<script src="api-integration.js"></script>
+
+
+// Add this anywhere in your HTML:
+<div id="teams-container"></div>
+
+<script src="api-integration.js"></script>
+<script>
+  // Display all teams
+  displayTeams('teams-container');
+  
+  // Display all pages
+  displayPages('pages-container');
+</script>
 </script>
 </body>
 </html>
